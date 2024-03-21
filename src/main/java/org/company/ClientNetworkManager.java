@@ -2,6 +2,7 @@ package org.company;
 
 import javax.swing.*;
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class ClientNetworkManager {
@@ -9,33 +10,46 @@ public class ClientNetworkManager {
     private PrintWriter output;
     private BufferedReader input;
     private ChatClientUI ui;
+    private String serverIP;
+    private int serverPort;
 
-    public ClientNetworkManager(String serverIP, int port, ChatClientUI ui) {
+    public ClientNetworkManager(String serverIP, int serverPort, ChatClientUI ui) {
         this.ui = ui;
-        if (!tryToConnect(serverIP, port)) {
-            // Handle failed connection attempt
+        this.serverIP = serverIP;
+        this.serverPort = serverPort;
+
+        if (!tryToConnect()) {
             SwingUtilities.invokeLater(() -> {
                 JOptionPane.showMessageDialog(null,
-                        "Could not connect to the server at " + serverIP + ":" + port + ". Please check if the server is running and try again.",
+                        "Could not connect to the server at " + serverIP + ":" + serverPort + ". Please check if the server is running and try again.",
                         "Connection Error", JOptionPane.ERROR_MESSAGE);
                 System.exit(1); // Exit or allow the user to retry
             });
         }
     }
 
-    public boolean tryToConnect(String serverIP, int serverPort) {
+    public boolean tryToConnect() {
+        if (isConnected()) {
+            return true; // Already connected
+        }
         try {
-            socket = new Socket(serverIP, serverPort);
+            socket = new Socket(serverIP, serverPort); // Use member variables
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output = new PrintWriter(socket.getOutputStream(), true);
             startListening();
-            return true;
+            return true; // Connection was successful
         } catch (IOException e) {
-            System.err.println("Could not establish a connection to the server: " + serverIP + " on port " + serverPort);
-            e.printStackTrace();
-            return false;
+            // Handle connection error
+            SwingUtilities.invokeLater(() -> {
+                JOptionPane.showMessageDialog(null,
+                        "Could not connect to the server at " + serverIP + ":" + serverPort + ". Please check if the server is running and try again.",
+                        "Connection Error", JOptionPane.ERROR_MESSAGE);
+            });
+            return false; // Connection failed
         }
     }
+
+
 
     private void startListening() {
         new Thread(() -> {
@@ -57,4 +71,9 @@ public class ClientNetworkManager {
     public void sendMessage(String message) {
         output.println(message);
     }
+
+    public boolean isConnected() {
+        return (socket != null) && socket.isConnected() && !socket.isClosed();
+    }
+
 }

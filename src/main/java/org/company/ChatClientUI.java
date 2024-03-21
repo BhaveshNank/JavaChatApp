@@ -12,6 +12,7 @@ public class ChatClientUI {
     private DefaultListModel<String> userModel;
     private JButton sendButton;
     private JButton refreshButton;
+    private JButton connectButton;
 
     private ClientNetworkManager networkManager;
     private ClientUserManager userManager;
@@ -25,52 +26,75 @@ public class ChatClientUI {
     private void initializeUI() {
         frame = new JFrame("Chat Client");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout()); // Set a BorderLayout for the JFrame
+        frame.setLayout(new BorderLayout());
 
-        messageArea = new JTextArea(30, 50); // Increased width to better fill space
+        messageArea = new JTextArea(30, 50);
         messageArea.setEditable(false);
-        JScrollPane messageScrollPane = new JScrollPane(messageArea); // Put the text area in a scroll pane
+        JScrollPane messageScrollPane = new JScrollPane(messageArea);
 
-        inputField = new JTextField(50); // Adjust to match the width of message area
+        inputField = new JTextField(50);
         userModel = new DefaultListModel<>();
         userList = new JList<>(userModel);
-        JScrollPane userScrollPane = new JScrollPane(userList); // Put the user list in a scroll pane
+        JScrollPane userScrollPane = new JScrollPane(userList);
 
         sendButton = new JButton("Send");
         refreshButton = new JButton("Refresh");
+        connectButton = new JButton("Connect");
 
+        // Action listeners
         sendButton.addActionListener(this::sendMessageAction);
-        refreshButton.addActionListener(e -> {
-            userModel.clear();
-            userModel.addAll(userManager.readUsernames());
-        });
+        refreshButton.addActionListener(this::refreshUserListAction);
+        connectButton.addActionListener(this::connectAction);
 
         // Layout components
         frame.add(messageScrollPane, BorderLayout.CENTER);
         frame.add(inputField, BorderLayout.SOUTH);
 
         // Panel for user list and buttons
-        JPanel eastPanel = new JPanel();
-        eastPanel.setLayout(new BorderLayout());
+        JPanel eastPanel = new JPanel(new BorderLayout());
         eastPanel.add(userScrollPane, BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout());
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(connectButton);
         buttonPanel.add(sendButton);
         buttonPanel.add(refreshButton);
         eastPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         frame.add(eastPanel, BorderLayout.EAST);
 
-        frame.setMinimumSize(new Dimension(800, 600)); // Ensure the minimum size is enough to display all components
+        frame.setMinimumSize(new Dimension(800, 600));
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
     private void sendMessageAction(ActionEvent e) {
-        String message = inputField.getText();
-        networkManager.sendMessage(message);
-        inputField.setText("");
+        if (networkManager.isConnected()) {
+            String message = inputField.getText();
+            networkManager.sendMessage(message);
+            inputField.setText("");
+        } else {
+            displayMessage("Not connected to server. Please connect first.");
+        }
+    }
+
+    private void connectAction(ActionEvent e) {
+        if (!networkManager.isConnected()) {
+            boolean success = networkManager.tryToConnect();
+            if (success) {
+                connectButton.setEnabled(false); // Disable after successful connection
+                sendButton.setEnabled(true); // Enable send button after connection
+                displayMessage("Connected to the server.");
+            } else {
+                displayMessage("Could not connect to the server. Try again.");
+            }
+        }
+    }
+
+
+
+    private void refreshUserListAction(ActionEvent e) {
+        refreshUserList();
     }
 
     public void refreshUserList() {
@@ -84,7 +108,8 @@ public class ChatClientUI {
 
     public void setNetworkManager(ClientNetworkManager networkManager) {
         this.networkManager = networkManager;
-        sendButton.setEnabled(true);
+        // Assuming the network manager must be connected before enabling the send button.
+        sendButton.setEnabled(networkManager.isConnected());
     }
 
     public JFrame getFrame() {

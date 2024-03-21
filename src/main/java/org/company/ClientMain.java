@@ -48,11 +48,13 @@ public class ClientMain {
             ClientUserManager userManager = new ClientUserManager();
             ChatClientUI ui = new ChatClientUI(null, userManager);
             ClientNetworkManager networkManager = new ClientNetworkManager(serverIP, serverPort, ui);
-            if (networkManager.tryToConnect(serverIP, serverPort)) {
+
+            if (networkManager.tryToConnect()) {
                 ui.setNetworkManager(networkManager);
                 ui.refreshUserList(); // Refresh user list from file on startup
                 ui.displayMessage("Welcome to the Chat Client");
             } else {
+                JOptionPane.showMessageDialog(null, "Could not connect to the server.");
                 System.exit(1); // Exit the application if connection failed
             }
         });
