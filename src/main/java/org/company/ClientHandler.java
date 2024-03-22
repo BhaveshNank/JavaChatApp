@@ -11,50 +11,60 @@ public class ClientHandler extends Thread {
     private final BufferedReader input;
     private final PrintWriter output;
     private final Server server;
+    private boolean welcomeSent = false; // Add a flag to track if welcome has been sent
 
     public ClientHandler(Socket socket, Server server) throws IOException {
         this.socket = socket;
         this.server = server;
         input = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
         output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
-        name = input.readLine();
-        sendWelcomeMessage();
-        notifyJoin();
+
+        // Read the username from the input stream
+        this.name = input.readLine();
+        // Validate username
+        if (this.name == null || this.name.trim().isEmpty()) {
+            throw new IOException("Invalid username received.");
+        }
+
+        // Call the sendWelcomeMessage only once, right here
+        sendWelcomeMessage(name);
+        notifyJoin(name);
+        welcomeSent = true; // Set the flag as true after sending the welcome message
     }
 
-    private void sendWelcomeMessage() {
-        sendMessage("Welcome " + name);
+    private void sendWelcomeMessage(String userName) {
+        sendMessage("Welcome to the Chat Client, " + userName);
     }
 
-    private void notifyJoin() {
-        server.broadcastMessage(name + " has joined the chat!", this);
+    private void notifyJoin(String userName) {
+        server.broadcastMessage(userName + " has joined the chat!", this);
     }
 
     @Override
     public void run() {
-        String inputLine;
         try {
+            // Process incoming messages from the client
+            String inputLine;
             while ((inputLine = input.readLine()) != null) {
-                processInput(inputLine);
+                processInput(inputLine); // No need to pass the userName here since it's stored as 'name'
             }
         } catch (IOException e) {
-            server.removeClient(this);
             server.broadcastMessage(name + " has left the chat!", this);
+            e.printStackTrace();
         } finally {
             disconnect();
         }
     }
 
-    private void processInput(String input) {
-        if (input.startsWith("/")) {
-            // Call the server's method directly to execute commands
-            server.executeCommand(input, this);
+    private void processInput(String inputLine) {
+        if (inputLine.startsWith("/")) {
+            // Handle command
+            server.executeCommand(inputLine, this);
         } else {
-            // Regular chat message handling, broadcast the message or handle it as needed
-            server.broadcastMessage(name + ": " + input, this);
+            // Regular chat message handling
+            server.broadcastMessage(name + ": " + inputLine, this); // Use the 'name' field directly
         }
     }
-
 
     public void disconnect() {
         try {
@@ -66,7 +76,7 @@ public class ClientHandler extends Thread {
     }
 
     public void sendMessage(String message) {
-        output.println(URLEncoder.encode(message, StandardCharsets.UTF_8));
+        output.println(message); // Remove URL encoding if not necessary
     }
 
     public String getClientName() {

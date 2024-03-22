@@ -39,15 +39,11 @@ public class ClientNetworkManager {
             startListening();
             return true; // Connection was successful
         } catch (IOException e) {
-            // Handle connection error
-            SwingUtilities.invokeLater(() -> {
-                JOptionPane.showMessageDialog(null,
-                        "Could not connect to the server at " + serverIP + ":" + serverPort + ". Please check if the server is running and try again.",
-                        "Connection Error", JOptionPane.ERROR_MESSAGE);
-            });
+            // Instead of showing a dialog here, return false and let the UI handle it
             return false; // Connection failed
         }
     }
+
 
 
 

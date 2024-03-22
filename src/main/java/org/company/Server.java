@@ -75,9 +75,9 @@ public class Server {
     }
 
 
-    public void broadcastMessage(String message, ClientHandler sender) {
+    public synchronized void broadcastMessage(String message, ClientHandler sender) {
         for (ClientHandler client : clientHandlers) {
-            if (!client.equals(sender)) {
+            if (client != sender) { // Don't send the message back to the sender
                 client.sendMessage(message);
             }
         }
