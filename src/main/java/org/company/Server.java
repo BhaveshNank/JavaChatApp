@@ -40,6 +40,7 @@ public class Server {
                     ClientHandler clientHandler = new ClientHandler(clientSocket, this);
                     threadPool.execute(clientHandler); // Handle client in a separate thread
                     clientHandlers.add(clientHandler);
+                    updateActiveUsers(); // call this method to update all clients with the new user list
                 } catch (IOException e) {
                     if (!serverSocket.isClosed()) {
                         System.err.println("Error accepting client connection: " + e.getMessage());
@@ -76,11 +77,13 @@ public class Server {
 
 
     public synchronized void broadcastMessage(String message, ClientHandler sender) {
-        // Send the message to all clients, including the sender
         for (ClientHandler client : clientHandlers) {
-            client.sendMessage(message);
+            if (client != sender) {
+                client.sendMessage(message);
+            }
         }
     }
+
 
 
     public void removeClient(ClientHandler clientHandler) {
@@ -125,4 +128,16 @@ public class Server {
     public boolean isRunning() {
         return isRunning;
     }
+
+    public synchronized void updateActiveUsers() {
+        String activeUsers = clientHandlers.stream()
+                .map(ClientHandler::getClientName)
+                .collect(Collectors.joining(","));
+
+        String updateMessage = "/updateusers " + activeUsers;
+        for (ClientHandler client : clientHandlers) {
+            client.sendMessage(updateMessage);
+        }
+    }
+
 }

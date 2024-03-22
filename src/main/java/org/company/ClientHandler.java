@@ -23,22 +23,15 @@ public class ClientHandler extends Thread {
         try {
             // Read the username from the input stream
             this.name = input.readLine();
-            boolean welcomeSent = false;
-            if (this.name != null && !this.name.isEmpty()) {
+            if (this.name != null && !this.name.trim().isEmpty()) {
                 sendWelcomeMessage();
                 notifyJoin();
-                welcomeSent = true;
+                server.updateActiveUsers(); // update the active user list
             }
 
             String inputLine;
             while ((inputLine = input.readLine()) != null) {
-                if (!welcomeSent) {
-                    sendWelcomeMessage(); // Send welcome message only if it's not yet sent
-                    notifyJoin(); // Notify other clients about this client joining
-//                    welcomeSent = true; // Set the flag as true after sending the welcome message
-                } else {
-                    processInput(inputLine); // Process regular messages
-                }
+                processInput(inputLine, this); // Process regular messages
             }
         } catch (IOException e) {
             server.broadcastMessage(name + " has left the chat!", this);
@@ -48,6 +41,7 @@ public class ClientHandler extends Thread {
         }
     }
 
+
     private void sendWelcomeMessage() {
         sendMessage("Welcome to the Chat Client, " + name);
     }
@@ -56,11 +50,22 @@ public class ClientHandler extends Thread {
         server.broadcastMessage(name + " has joined the chat!", this);
     }
 
-    private void processInput(String inputLine) {
-        if (!inputLine.trim().isEmpty()) {
-            server.broadcastMessage(name + ": " + inputLine, this);
+    private void processInput(String inputLine, ClientHandler client) {
+        if (!inputLine.startsWith("/")) {
+            // If it's not a command, broadcast it as a chat message
+            server.broadcastMessage(client.getName() + ": " + inputLine, this);
+        } else {
+            // Here, you would handle the command - but do not send the command itself to all clients.
+            handleCommand(inputLine, client);
         }
     }
+
+
+    private void handleCommand(String command, ClientHandler client) {
+        // Parse and execute the command
+        // Do not broadcast this as a chat message
+    }
+
 
 
     public void disconnect() {
@@ -70,6 +75,7 @@ public class ClientHandler extends Thread {
             // Log or handle the exception
         }
         server.removeClient(this);
+        server.updateActiveUsers();
     }
 
     public void sendMessage(String message) {

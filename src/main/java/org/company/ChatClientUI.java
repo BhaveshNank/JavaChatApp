@@ -71,12 +71,16 @@ public class ChatClientUI {
     private void sendMessageAction(ActionEvent e) {
         if (networkManager.isConnected()) {
             String message = inputField.getText();
-            networkManager.sendMessage(message);
-            inputField.setText("");
+            if (!message.isEmpty()) {
+                networkManager.sendMessage(message);
+                displayMessage("You: " + message); // This will append the message to the chat area
+                inputField.setText("");
+            }
         } else {
             displayMessage("Not connected to server. Please connect first.");
         }
     }
+
 
     private void connectAction(ActionEvent e) {
         if (!networkManager.isConnected()) {
@@ -111,6 +115,16 @@ public class ChatClientUI {
         // Assuming the network manager must be connected before enabling the send button.
         sendButton.setEnabled(networkManager.isConnected());
     }
+
+    public void updateUserList(String[] usernames) {
+        SwingUtilities.invokeLater(() -> {
+            userModel.clear();
+            for (String user : usernames) {
+                userModel.addElement(user);
+            }
+        });
+    }
+
 
     public JFrame getFrame() {
         return frame;

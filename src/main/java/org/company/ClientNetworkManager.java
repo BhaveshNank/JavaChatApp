@@ -59,7 +59,13 @@ public class ClientNetworkManager {
             try {
                 String message;
                 while ((message = input.readLine()) != null) {
-                    ui.displayMessage(message);
+                    if (message.startsWith("/updateusers")) {
+                        String[] usernames = message.substring(13).split(",");
+                        ui.updateUserList(usernames);
+                    } else {
+                        ui.displayMessage(message);
+                    }
+//                    ui.displayMessage(message);
                 }
             } catch (IOException e) {
                 SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(ui.getFrame(),
