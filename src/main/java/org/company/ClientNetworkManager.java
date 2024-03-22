@@ -2,7 +2,6 @@ package org.company;
 
 import javax.swing.*;
 import java.io.*;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class ClientNetworkManager {
@@ -12,11 +11,13 @@ public class ClientNetworkManager {
     private ChatClientUI ui;
     private String serverIP;
     private int serverPort;
+    private String userName; // Declare the userName variable
 
-    public ClientNetworkManager(String serverIP, int serverPort, ChatClientUI ui) {
+    public ClientNetworkManager(String serverIP, int serverPort, String userName, ChatClientUI ui) {
         this.ui = ui;
         this.serverIP = serverIP;
         this.serverPort = serverPort;
+        this.userName = userName; // Initialize the userName variable
 
         if (!tryToConnect()) {
             SwingUtilities.invokeLater(() -> {
@@ -33,19 +34,25 @@ public class ClientNetworkManager {
             return true; // Already connected
         }
         try {
-            socket = new Socket(serverIP, serverPort); // Use member variables
+            socket = new Socket(serverIP, serverPort);
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output = new PrintWriter(socket.getOutputStream(), true);
+
+            sendUserName(); // Send the username immediately after establishing a connection
+
             startListening();
             return true; // Connection was successful
         } catch (IOException e) {
-            // Instead of showing a dialog here, return false and let the UI handle it
+            ui.displayMessage("Could not connect to server at " + serverIP + ":" + serverPort);
             return false; // Connection failed
         }
     }
 
-
-
+    private void sendUserName() {
+        if (output != null && userName != null && !userName.trim().isEmpty()) {
+            output.println(userName); // Send the username to the server
+        }
+    }
 
     private void startListening() {
         new Thread(() -> {
@@ -55,11 +62,9 @@ public class ClientNetworkManager {
                     ui.displayMessage(message);
                 }
             } catch (IOException e) {
-                // Notify the user of the disconnection
                 SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(ui.getFrame(),
                         "You have been disconnected from the server.",
                         "Disconnected", JOptionPane.ERROR_MESSAGE));
-                // Attempt to reconnect or close resources as necessary
             }
         }).start();
     }
@@ -71,5 +76,4 @@ public class ClientNetworkManager {
     public boolean isConnected() {
         return (socket != null) && socket.isConnected() && !socket.isClosed();
     }
-
 }

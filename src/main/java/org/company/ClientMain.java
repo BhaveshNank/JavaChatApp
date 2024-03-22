@@ -12,8 +12,8 @@ public class ClientMain {
             // Use GridLayout to layout labels and text fields
             JPanel panel = new JPanel(new GridLayout(0, 1, 2, 2));
             JTextField usernameField = new JTextField();
-            JTextField portField = new JTextField();
-            JTextField serverIPField = new JTextField();
+            JTextField portField = new JTextField("8080"); // set default port
+            JTextField serverIPField = new JTextField("localhost"); // set default IP
 
             panel.add(new JLabel("Name:"));
             panel.add(usernameField);
@@ -40,13 +40,14 @@ public class ClientMain {
                 int serverPort = Integer.parseInt(serverPortStr);
                 ClientUserManager userManager = new ClientUserManager();
                 ChatClientUI ui = new ChatClientUI(null, userManager);
-                ClientNetworkManager networkManager = new ClientNetworkManager(serverIP, serverPort, ui);
+                ClientNetworkManager networkManager = new ClientNetworkManager(serverIP, serverPort, userName, ui);
+
 
                 // Try to connect to the server
                 if (networkManager.tryToConnect()) {
                     ui.setNetworkManager(networkManager);
                     ui.refreshUserList(); // Refresh user list from file on startup
-                    ui.displayMessage("Welcome to the Chat Client, " + userName);
+//                    ui.displayMessage("Welcome to the Chat Client");
                 } else {
                     JOptionPane.showMessageDialog(null, "Could not connect to the server.",
                             "Connection Error", JOptionPane.ERROR_MESSAGE);

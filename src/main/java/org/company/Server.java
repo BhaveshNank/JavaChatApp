@@ -76,12 +76,12 @@ public class Server {
 
 
     public synchronized void broadcastMessage(String message, ClientHandler sender) {
+        // Send the message to all clients, including the sender
         for (ClientHandler client : clientHandlers) {
-            if (client != sender) { // Don't send the message back to the sender
-                client.sendMessage(message);
-            }
+            client.sendMessage(message);
         }
     }
+
 
     public void removeClient(ClientHandler clientHandler) {
         clientHandlers.remove(clientHandler);
