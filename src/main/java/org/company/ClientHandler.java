@@ -22,12 +22,18 @@ public class ClientHandler extends Thread {
     public void run() {
         try {
             // Read the username from the input stream
-            this.name = input.readLine();
-            if (this.name != null && !this.name.trim().isEmpty()) {
+            this.name = input.readLine().trim();
+            System.out.println("Debug: Username received - '" + this.name + "'"); // Debug line
+
+            if (this.name != null && !this.name.isEmpty()) {
                 server.notifyNewClientConnection(this.name);
                 sendWelcomeMessage();
                 notifyJoin();
                 server.updateActiveUsers(); // update the active user list
+            } else {
+                System.out.println("Username is null or empty");
+                disconnect(); // disconnect if no valid name is provided
+                return; // exit the run method
             }
 
             String inputLine;
@@ -41,6 +47,7 @@ public class ClientHandler extends Thread {
                 }
             }
         } catch (IOException e) {
+            System.out.println(name + " encountered an error: " + e.getMessage());
             server.broadcastMessage(name + " has left the chat!", this);
             e.printStackTrace();
         } finally {
@@ -54,18 +61,32 @@ public class ClientHandler extends Thread {
     }
 
     private void notifyJoin() {
-        server.broadcastMessage(name + " has joined the chat!", this);
+        // This will send a message to all connected clients that a new user has joined.
+        server.broadcastMessage(name + " has joined the chat!", null);
     }
 
+
     private void processInput(String inputLine, ClientHandler client) {
-        if (!inputLine.startsWith("/")) {
+        // If the message starts with "@", it's a private message
+        if (inputLine.startsWith("@")) {
+            String[] parts = inputLine.split(" ", 2);
+            if (parts.length < 2) {
+                sendMessage("Invalid private message format. Usage: @username message");
+            } else {
+                String recipientName = parts[0].substring(1); // remove "@" and get the username
+                String message = parts[1];
+                server.sendPrivateMessage(message, recipientName, client);
+            }
+        } else if (!inputLine.startsWith("/")) {
             // If it's not a command, broadcast it as a chat message
-            server.broadcastMessage(this.name + ": " + inputLine, this);
+            server.broadcastMessage(inputLine, this);
+
         } else {
             // Here, you would handle the command - but do not send the command itself to all clients.
             handleCommand(inputLine, client);
         }
     }
+
 
 
     private void handleCommand(String command, ClientHandler client) {
@@ -86,6 +107,7 @@ public class ClientHandler extends Thread {
     }
 
     public void sendMessage(String message) {
+        System.out.println("Debug: Sending message to " + this.getClientName() + " - " + message); // Debug statement
         output.println(message);
     }
 

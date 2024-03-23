@@ -14,7 +14,7 @@ public class ClientNetworkManager {
     private String userName; // Declare the userName variable
 
     public ClientNetworkManager(String serverIP, int serverPort, String userName) {
-        this.ui = ui;
+//        this.ui = ui;
         this.serverIP = serverIP;
         this.serverPort = serverPort;
         this.userName = userName; // Initialize the userName variable
@@ -62,6 +62,7 @@ public class ClientNetworkManager {
             try {
                 String message;
                 while ((message = input.readLine()) != null) {
+                    System.out.println("Received message: " + message);
                     final String msg = message; // to be used within the lambda expression
                     SwingUtilities.invokeLater(() -> {
                         if (msg.startsWith("/updateusers")) {
@@ -69,6 +70,7 @@ public class ClientNetworkManager {
                             String[] usernames = msg.substring("/updateusers ".length()).split(",");
                             ui.updateUserList(usernames);
                         } else {
+                            System.out.println("Debug: Received message to display: " + msg); // Debug statement
                             ui.displayMessage(msg);
                         }
                     });

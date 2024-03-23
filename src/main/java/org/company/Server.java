@@ -98,11 +98,16 @@ public class Server {
 
     public synchronized void broadcastMessage(String message, ClientHandler sender) {
         for (ClientHandler client : clientHandlers) {
-            if (client != sender) {
+            // When sender is null, it means it's a system message, not a user message.
+            if (sender == null) {
                 client.sendMessage(message);
+            } else if (!client.equals(sender)) {
+                client.sendMessage(sender.getClientName() + ": " + message);
             }
         }
     }
+
+
 
 
 
@@ -180,6 +185,17 @@ public class Server {
     }
 
 
-
+    public void sendPrivateMessage(String message, String recipientName, ClientHandler sender) {
+        for (ClientHandler client : clientHandlers) {
+            if (client.getClientName().equals(recipientName)) {
+                System.out.println("Debug: Sending private message from " + sender.getClientName() + " to " + recipientName); // Debugging line
+                client.sendMessage(sender.getClientName() + " (private): " + message);
+                return; // message sent to the intended recipient; no need to continue the loop
+            }
+        }
+        // If we reach here, the recipient was not found
+        System.out.println("Debug: Private recipient not found: " + recipientName); // Debugging line
+        sender.sendMessage("User " + recipientName + " not found or not connected.");
+    }
 
 }

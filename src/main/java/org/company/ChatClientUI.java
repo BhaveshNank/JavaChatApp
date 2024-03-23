@@ -30,11 +30,11 @@ public class ChatClientUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
-        messageArea = new JTextArea(30, 50);
+        messageArea = new JTextArea(20, 40);
         messageArea.setEditable(false);
         JScrollPane messageScrollPane = new JScrollPane(messageArea);
 
-        inputField = new JTextField(50);
+        inputField = new JTextField(40);
         userModel = new DefaultListModel<>();
         userList = new JList<>(userModel);
         JScrollPane userScrollPane = new JScrollPane(userList);
@@ -65,7 +65,8 @@ public class ChatClientUI {
 
         frame.add(eastPanel, BorderLayout.EAST);
 
-        frame.setMinimumSize(new Dimension(800, 600));
+        frame.setSize(new Dimension(300, 400));
+        frame.setResizable(false);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -112,6 +113,7 @@ public class ChatClientUI {
     public void displayMessage(String message) {
         SwingUtilities.invokeLater(() -> messageArea.append(message + "\n"));
     }
+
 
     public void setNetworkManager(ClientNetworkManager networkManager) {
         this.networkManager = networkManager;

@@ -108,8 +108,8 @@
       <list>
         <item itemvalue="Application.ClientMain" />
         <item itemvalue="Application.ServerGUI" />
-        <item itemvalue="Application.ServerMain" />
         <item itemvalue="Application.Server" />
+        <item itemvalue="Application.ServerMain" />
       </list>
     </recent_temporary>
   </component>
