@@ -12,19 +12,21 @@ public class ChatClientUI {
     private DefaultListModel<String> userModel;
     private JButton sendButton;
     private JButton refreshButton;
-    private JButton connectButton;
+//    private JButton connectButton;
 
     private ClientNetworkManager networkManager;
     private ClientUserManager userManager;
+    private String username;
 
-    public ChatClientUI(ClientNetworkManager networkManager, ClientUserManager userManager) {
+    public ChatClientUI(ClientNetworkManager networkManager, ClientUserManager userManager, String username) {
         this.networkManager = networkManager;
         this.userManager = userManager;
-        initializeUI();
+        this.username = username; // set the username passed from the constructor
+        initializeUI(); // initialize the user interface
     }
 
     private void initializeUI() {
-        frame = new JFrame("Chat Client");
+        frame = new JFrame("Chat Client - " + username);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
@@ -39,12 +41,13 @@ public class ChatClientUI {
 
         sendButton = new JButton("Send");
         refreshButton = new JButton("Refresh");
-        connectButton = new JButton("Connect");
+//        connectButton = new JButton("Connect");
 
         // Action listeners
         sendButton.addActionListener(this::sendMessageAction);
-        refreshButton.addActionListener(this::refreshUserListAction);
-        connectButton.addActionListener(this::connectAction);
+        refreshButton.addActionListener(e -> networkManager.requestUserList());
+
+//        connectButton.addActionListener(this::connectAction);
 
         // Layout components
         frame.add(messageScrollPane, BorderLayout.CENTER);
@@ -55,7 +58,7 @@ public class ChatClientUI {
         eastPanel.add(userScrollPane, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.add(connectButton);
+//        buttonPanel.add(connectButton);
         buttonPanel.add(sendButton);
         buttonPanel.add(refreshButton);
         eastPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -82,23 +85,23 @@ public class ChatClientUI {
     }
 
 
-    private void connectAction(ActionEvent e) {
-        if (!networkManager.isConnected()) {
-            boolean success = networkManager.tryToConnect();
-            if (success) {
-                connectButton.setEnabled(false); // Disable after successful connection
-                sendButton.setEnabled(true); // Enable send button after connection
-                displayMessage("Connected to the server.");
-            } else {
-                displayMessage("Could not connect to the server. Try again.");
-            }
-        }
-    }
+//    private void connectAction(ActionEvent e) {
+//        if (!networkManager.isConnected()) {
+//            boolean success = networkManager.tryToConnect();
+//            if (success) {
+//                connectButton.setEnabled(false); // Disable after successful connection
+//                sendButton.setEnabled(true); // Enable send button after connection
+//                displayMessage("Connected to the server.");
+//            } else {
+//                displayMessage("Could not connect to the server. Try again.");
+//            }
+//        }
+//    }
 
 
 
     private void refreshUserListAction(ActionEvent e) {
-        refreshUserList();
+        networkManager.requestUserList();
     }
 
     public void refreshUserList() {

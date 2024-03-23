@@ -1,5 +1,6 @@
 package org.company;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,8 +18,24 @@ public class Server {
     private ServerSocket serverSocket;
     private boolean isRunning;
     private ExecutorService threadPool; // For handling client threads
-//    private CommandExecutor commandExecutor;
+    private JTextArea serverLogTextArea;
 
+
+    // Setter method for serverLogTextArea
+    public void setServerLogTextArea(JTextArea logTextArea) {
+        this.serverLogTextArea = logTextArea;
+    }
+
+    // Method to append a message to the server log
+    public void appendToServerLog(String message) {
+        if (serverLogTextArea != null) {
+            SwingUtilities.invokeLater(() -> {
+                serverLogTextArea.append(message + "\n");
+            });
+        } else {
+            System.out.println("Server log text area not set or GUI not initialized.");
+        }
+    }
     public Server(int port) {
         this.port = port;
         this.clientHandlers = new ArrayList<>();
@@ -26,6 +43,8 @@ public class Server {
         this.threadPool = Executors.newCachedThreadPool();
 //        this.commandExecutor = new CommandExecutor(this);
     }
+
+
 
     public void start() {
         isRunning = true;
@@ -36,7 +55,8 @@ public class Server {
             while (isRunning) {
                 try {
                     Socket clientSocket = serverSocket.accept(); // Accept incoming connections
-                    System.out.println("Accepted connection from " + clientSocket);
+                    appendToServerLog("Accepted connection from " + clientSocket.getInetAddress().getHostAddress()); // Log the connection
+
                     ClientHandler clientHandler = new ClientHandler(clientSocket, this);
                     threadPool.execute(clientHandler); // Handle client in a separate thread
                     clientHandlers.add(clientHandler);
@@ -104,14 +124,24 @@ public class Server {
                 }
                 break;
             case "/activeusers":
+                // This case seems to handle a similar functionality as the requested "/requestuserlist"
+                // Ensure the command used here aligns with the one used in ClientNetworkManager's requestUserList method
                 String activeUsers = clientHandlers.stream()
                         .map(ClientHandler::getClientName)
                         .collect(Collectors.joining(", "));
-                sender.sendMessage("Active users: " + activeUsers);
+                sender.sendMessage("/updateusers " + activeUsers); // Ensure this format is consistent with the client's expectation
+                break;
+            case "/requestuserlist":
+                // Respond to a request for a list of currently active users
+                String users = clientHandlers.stream()
+                        .map(ClientHandler::getClientName)
+                        .collect(Collectors.joining(","));
+                sender.sendMessage("/updateusers " + users);
                 break;
             // Handle other commands...
         }
     }
+
 
     private void kickUser(String username, ClientHandler initiator) {
         // Logic to kick a user...
@@ -139,5 +169,17 @@ public class Server {
             client.sendMessage(updateMessage);
         }
     }
+
+    public void notifyNewClientConnection(String clientName) {
+        // If you're using Swing and the updates are happening outside the Event Dispatch Thread (EDT),
+        // you need to wrap changes to the GUI inside SwingUtilities.invokeLater
+        SwingUtilities.invokeLater(() -> {
+            // Assuming you have a JTextArea or similar UI component to show server logs
+            serverLogTextArea.append(clientName + " has connected.\n");
+        });
+    }
+
+
+
 
 }

@@ -38,9 +38,13 @@ public class ClientMain {
                 }
 
                 int serverPort = Integer.parseInt(serverPortStr);
+
                 ClientUserManager userManager = new ClientUserManager();
-                ChatClientUI ui = new ChatClientUI(null, userManager);
-                ClientNetworkManager networkManager = new ClientNetworkManager(serverIP, serverPort, userName, ui);
+                ClientNetworkManager networkManager = new ClientNetworkManager(serverIP, serverPort, userName);
+                ChatClientUI ui = new ChatClientUI(networkManager, userManager, userName);
+
+                // If needed, pass the ChatClientUI reference to the ClientNetworkManager
+                networkManager.setChatClientUI(ui); // You must add this setter method in ClientNetworkManager class.
 
 
                 // Try to connect to the server
@@ -58,6 +62,7 @@ public class ClientMain {
             }
         });
     }
+
 
     private static boolean isValidPort(String portStr) {
         try {

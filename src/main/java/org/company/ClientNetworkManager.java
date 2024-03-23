@@ -28,7 +28,10 @@ public class ClientNetworkManager {
             });
         }
     }
-
+    public void setChatClientUI(ChatClientUI ui) {
+        this.ui = ui;
+        // You can use ui within ClientNetworkManager now
+    }
     public boolean tryToConnect() {
         if (isConnected()) {
             return true; // Already connected
@@ -60,12 +63,13 @@ public class ClientNetworkManager {
                 String message;
                 while ((message = input.readLine()) != null) {
                     if (message.startsWith("/updateusers")) {
+                        // Store the usernames received from the server
                         String[] usernames = message.substring(13).split(",");
                         ui.updateUserList(usernames);
+                        // Do not automatically call ui.updateUserList(usernames);
                     } else {
                         ui.displayMessage(message);
                     }
-//                    ui.displayMessage(message);
                 }
             } catch (IOException e) {
                 SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(ui.getFrame(),
@@ -73,6 +77,13 @@ public class ClientNetworkManager {
                         "Disconnected", JOptionPane.ERROR_MESSAGE));
             }
         }).start();
+    }
+
+    // Add a method to manually request the user list from the server
+    public void requestUserList() {
+        if (output != null) {
+            output.println("/requestuserlist"); // Ensure this command is handled by the server
+        }
     }
 
     public void sendMessage(String message) {
@@ -83,3 +94,5 @@ public class ClientNetworkManager {
         return (socket != null) && socket.isConnected() && !socket.isClosed();
     }
 }
+
+

@@ -52,6 +52,7 @@ public class ServerGUI extends JFrame {
     private void startServer(int port) {
         if (server == null || !server.isRunning()) {
             server = new Server(port);
+            server.setServerLogTextArea(logTextArea); // Pass the log text area to the server
             new Thread(() -> server.start()).start();
             startStopButton.setText("Stop Server");
             logTextArea.append("Server started on port: " + port + "\n");
@@ -68,12 +69,14 @@ public class ServerGUI extends JFrame {
         }
     }
 
+    // Method to append messages to the log text area
+    public void appendLog(String message) {
+        SwingUtilities.invokeLater(() -> logTextArea.append(message + "\n"));
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new ServerGUI());
     }
 
-    public void appendLog(String message) {
-        SwingUtilities.invokeLater(() -> logTextArea.append(message + "\n"));
-    }
+
 }

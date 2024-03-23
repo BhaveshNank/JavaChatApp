@@ -24,6 +24,7 @@ public class ClientHandler extends Thread {
             // Read the username from the input stream
             this.name = input.readLine();
             if (this.name != null && !this.name.trim().isEmpty()) {
+                server.notifyNewClientConnection(this.name);
                 sendWelcomeMessage();
                 notifyJoin();
                 server.updateActiveUsers(); // update the active user list
@@ -31,7 +32,13 @@ public class ClientHandler extends Thread {
 
             String inputLine;
             while ((inputLine = input.readLine()) != null) {
-                processInput(inputLine, this); // Process regular messages
+                if (inputLine.startsWith("/")) {
+                    // If the input line starts with "/", it's a command. Execute it.
+                    server.executeCommand(inputLine, this);
+                } else {
+                    // If it's not a command, process it as a regular message.
+                    processInput(inputLine, this);
+                }
             }
         } catch (IOException e) {
             server.broadcastMessage(name + " has left the chat!", this);
@@ -53,7 +60,7 @@ public class ClientHandler extends Thread {
     private void processInput(String inputLine, ClientHandler client) {
         if (!inputLine.startsWith("/")) {
             // If it's not a command, broadcast it as a chat message
-            server.broadcastMessage(client.getName() + ": " + inputLine, this);
+            server.broadcastMessage(this.name + ": " + inputLine, this);
         } else {
             // Here, you would handle the command - but do not send the command itself to all clients.
             handleCommand(inputLine, client);
