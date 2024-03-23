@@ -13,7 +13,7 @@ public class ClientNetworkManager {
     private int serverPort;
     private String userName; // Declare the userName variable
 
-    public ClientNetworkManager(String serverIP, int serverPort, String userName, ChatClientUI ui) {
+    public ClientNetworkManager(String serverIP, int serverPort, String userName) {
         this.ui = ui;
         this.serverIP = serverIP;
         this.serverPort = serverPort;
@@ -62,14 +62,16 @@ public class ClientNetworkManager {
             try {
                 String message;
                 while ((message = input.readLine()) != null) {
-                    if (message.startsWith("/updateusers")) {
-                        // Store the usernames received from the server
-                        String[] usernames = message.substring(13).split(",");
-                        ui.updateUserList(usernames);
-                        // Do not automatically call ui.updateUserList(usernames);
-                    } else {
-                        ui.displayMessage(message);
-                    }
+                    final String msg = message; // to be used within the lambda expression
+                    SwingUtilities.invokeLater(() -> {
+                        if (msg.startsWith("/updateusers")) {
+                            // Correct the offset to the length of the command plus the space
+                            String[] usernames = msg.substring("/updateusers ".length()).split(",");
+                            ui.updateUserList(usernames);
+                        } else {
+                            ui.displayMessage(msg);
+                        }
+                    });
                 }
             } catch (IOException e) {
                 SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(ui.getFrame(),
@@ -78,6 +80,7 @@ public class ClientNetworkManager {
             }
         }).start();
     }
+
 
     // Add a method to manually request the user list from the server
     public void requestUserList() {

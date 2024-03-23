@@ -26,7 +26,7 @@ public class ChatClientUI {
     }
 
     private void initializeUI() {
-        frame = new JFrame("Chat Client - " + username);
+        frame = new JFrame(username);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
