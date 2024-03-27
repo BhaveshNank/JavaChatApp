@@ -99,8 +99,9 @@ public class Server {
 
     public synchronized void broadcastMessage(String message, ClientHandler sender) {
         for (ClientHandler client : clientHandlers) {
+            // Do not send the message to the sender
             if (!client.equals(sender)) {
-                client.sendMessage(sender.getClientName() + ": " + message);
+                client.sendMessage(message);
             }
         }
     }
@@ -181,7 +182,7 @@ public class Server {
         }
 
         if (userToKick != null) {
-            broadcastMessage("User " + username + " has been kicked out by the coordinator.", null);
+            broadcastMessage("User " + username + " has been kicked out by the coordinator.", initiator);
             userToKick.disconnect(); // This should remove the user and close the socket
             removeClient(userToKick); // Remove from the list
             updateActiveUsers(); // Update the active user list

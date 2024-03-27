@@ -56,7 +56,8 @@ public class ClientHandler extends Thread {
             }
         } catch (IOException e) {
             System.out.println(name + " encountered an error: " + e.getMessage());
-//            server.broadcastMessage(name + " has left the chat!", this);
+            sendMessage("An error occurred: " + e.getMessage()); // Inform the user about the error if the connection is still alive.
+            // Do not broadcast that a user has joined the chat in the catch block.
             e.printStackTrace();
         } finally {
             disconnect();
@@ -69,9 +70,11 @@ public class ClientHandler extends Thread {
     }
 
     private void notifyJoin() {
-        String joinMessage = name + " has joined the chat!";
-        server.broadcastMessage(joinMessage, this);
+        // Notify other users that a new user has joined
+        String joinMessage = this.name + " has joined the chat!";
+        server.broadcastMessage(joinMessage, this); // Pass 'true' to exclude the sender
     }
+
 
 
 
@@ -87,8 +90,9 @@ public class ClientHandler extends Thread {
                 server.sendPrivateMessage(message, recipientName, client);
             }
         } else if (!inputLine.startsWith("/")) {
-            // If it's not a command, broadcast it as a chat message
-            server.broadcastMessage(inputLine, this);
+            // If it's not a command, prepend the sender's name and broadcast it as a chat message
+            String formattedMessage = this.getClientName() + ": " + inputLine;
+            server.broadcastMessage(formattedMessage, this); // 'false' or 'true' depending on whether you want to include the sender
 
         } else {
             // Here, you would handle the command - but do not send the command itself to all clients.
