@@ -99,14 +99,19 @@ public class Server {
 
     public synchronized void broadcastMessage(String message, ClientHandler sender) {
         for (ClientHandler client : clientHandlers) {
-            // When sender is null, it means it's a system message, not a user message.
             if (sender == null) {
+                // It's a system message; send as is.
                 client.sendMessage(message);
-            } else if (!client.equals(sender)) {
-                client.sendMessage(sender.getClientName() + ": " + message);
+            } else {
+                // It's a user message; prepend sender's name.
+                if (!client.equals(sender)) {
+                    // Send this format to everyone except the sender.
+                    client.sendMessage(sender.getClientName() + ": " + message);
+                }
             }
         }
     }
+
 
     public synchronized boolean isUsernameTaken(String username) {
         return clientHandlers.stream().anyMatch(client -> username.equalsIgnoreCase(client.getClientName()));
@@ -240,7 +245,7 @@ public class Server {
                 for (ClientHandler client : clientHandlers) {
                     if (client.getClientName().equals(clientName)) {
                         // Send a welcome message first
-                        client.sendMessage("Welcome to the Chat Client, " + clientName);
+//                        client.sendMessage("Welcome to the Chat Client, " + clientName);
                         setCoordinator(client);
                         // Log update must be done in the Swing thread if it's updating the GUI
 //                        SwingUtilities.invokeLater(() -> serverLogTextArea.append(clientName + " is now the coordinator.\n"));
