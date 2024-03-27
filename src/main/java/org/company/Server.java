@@ -99,18 +99,12 @@ public class Server {
 
     public synchronized void broadcastMessage(String message, ClientHandler sender) {
         for (ClientHandler client : clientHandlers) {
-            if (sender == null) {
-                // It's a system message; send as is.
-                client.sendMessage(message);
-            } else {
-                // It's a user message; prepend sender's name.
-                if (!client.equals(sender)) {
-                    // Send this format to everyone except the sender.
-                    client.sendMessage(sender.getClientName() + ": " + message);
-                }
+            if (!client.equals(sender)) {
+                client.sendMessage(sender.getClientName() + ": " + message);
             }
         }
     }
+
 
 
     public synchronized boolean isUsernameTaken(String username) {

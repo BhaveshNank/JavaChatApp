@@ -41,7 +41,7 @@ public class ClientHandler extends Thread {
             this.name = attemptedName; // Set the username
             server.notifyNewClientConnection(this.name);
             sendWelcomeMessage();
-            notifyJoin(true);
+            notifyJoin();
             server.updateActiveUsers(); // Update the active user list
 
             String inputLine;
@@ -68,13 +68,9 @@ public class ClientHandler extends Thread {
         sendMessage("Welcome to the Chat Client, " + name);
     }
 
-    private void notifyJoin(boolean excludeSelf) {
+    private void notifyJoin() {
         String joinMessage = name + " has joined the chat!";
-        if (excludeSelf) {
-            server.broadcastMessage(joinMessage, this);
-        } else {
-            server.broadcastMessage(joinMessage, null);
-        }
+        server.broadcastMessage(joinMessage, this);
     }
 
 
