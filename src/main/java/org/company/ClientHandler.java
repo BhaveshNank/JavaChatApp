@@ -22,19 +22,27 @@ public class ClientHandler extends Thread {
     public void run() {
         try {
             // Read the username from the input stream
-            this.name = input.readLine().trim();
-            System.out.println("Debug: Username received - '" + this.name + "'"); // Debug line
+            String attemptedName = input.readLine().trim();
+            System.out.println("Debug: Attempted Username received - '" + attemptedName + "'"); // Debug line
 
-            if (this.name != null && !this.name.isEmpty()) {
-                server.notifyNewClientConnection(this.name);
-                sendWelcomeMessage();
-                notifyJoin();
-                server.updateActiveUsers(); // update the active user list
-            } else {
+            if (attemptedName == null || attemptedName.isEmpty()) {
                 System.out.println("Username is null or empty");
-                disconnect(); // disconnect if no valid name is provided
-                return; // exit the run method
+                output.println("Error: Username cannot be empty.");
+                disconnect(); // Disconnect if no valid name is provided
+                return; // Exit the run method
+            } else if (server.isUsernameTaken(attemptedName)) {
+                System.out.println("Username is already taken: " + attemptedName);
+                output.println("Error: Username is already taken.");
+                disconnect(); // Disconnect if username is taken
+                return; // Exit the run method
             }
+
+            // If username is valid and not taken, proceed
+            this.name = attemptedName; // Set the username
+            server.notifyNewClientConnection(this.name);
+            sendWelcomeMessage();
+            notifyJoin();
+            server.updateActiveUsers(); // Update the active user list
 
             String inputLine;
             while ((inputLine = input.readLine()) != null) {
@@ -54,6 +62,7 @@ public class ClientHandler extends Thread {
             disconnect();
         }
     }
+
 
 
     private void sendWelcomeMessage() {

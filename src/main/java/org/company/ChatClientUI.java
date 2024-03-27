@@ -72,6 +72,8 @@ public class ChatClientUI {
         frame.setVisible(true);
     }
 
+
+
     private void sendMessageAction(ActionEvent e) {
         if (networkManager.isConnected()) {
             String message = inputField.getText();
@@ -111,8 +113,16 @@ public class ChatClientUI {
     }
 
     public void displayMessage(String message) {
-        SwingUtilities.invokeLater(() -> messageArea.append(message + "\n"));
+        SwingUtilities.invokeLater(() -> {
+            messageArea.append(message + "\n");
+            // Check if the message is about coordinator status
+            if (message.endsWith("is the coordinator") || message.startsWith("You are now the coordinator")) {
+                // Display the message differently or trigger any additional UI changes
+                JOptionPane.showMessageDialog(frame, message);
+            }
+        });
     }
+
 
 
     public void setNetworkManager(ClientNetworkManager networkManager) {

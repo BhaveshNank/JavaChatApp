@@ -19,6 +19,7 @@ public class Server {
     private boolean isRunning;
     private ExecutorService threadPool; // For handling client threads
     private JTextArea serverLogTextArea;
+    private ClientHandler coordinator;
 
 
     // Setter method for serverLogTextArea
@@ -107,8 +108,9 @@ public class Server {
         }
     }
 
-
-
+    public synchronized boolean isUsernameTaken(String username) {
+        return clientHandlers.stream().anyMatch(client -> username.equalsIgnoreCase(client.getClientName()));
+    }
 
 
     public void removeClient(ClientHandler clientHandler) {
@@ -175,13 +177,40 @@ public class Server {
         }
     }
 
+    public synchronized void setCoordinator(ClientHandler clientHandler) {
+        // Inform the new coordinator
+        clientHandler.sendMessage("You are now the coordinator.");
+
+        // Inform all other clients about the new coordinator
+        String coordinatorMessage = clientHandler.getClientName() + " is the coordinator";
+        for (ClientHandler client : clientHandlers) {
+            if (client != clientHandler) { // Don't send this message to the new coordinator
+                client.sendMessage(coordinatorMessage);
+            }
+        }
+
+        coordinator = clientHandler; // Update the coordinator reference
+        // Broadcast a message if needed or update server log
+    }
     public void notifyNewClientConnection(String clientName) {
-        // If you're using Swing and the updates are happening outside the Event Dispatch Thread (EDT),
-        // you need to wrap changes to the GUI inside SwingUtilities.invokeLater
-        SwingUtilities.invokeLater(() -> {
-            // Assuming you have a JTextArea or similar UI component to show server logs
-            serverLogTextArea.append(clientName + " has connected.\n");
-        });
+        // Update the server log to show the new connection
+        SwingUtilities.invokeLater(() -> serverLogTextArea.append(clientName + " has connected.\n"));
+
+        synchronized (this) {
+            // If there's no coordinator yet, set the newly connected client as the coordinator
+            if (coordinator == null) {
+                for (ClientHandler client : clientHandlers) {
+                    if (client.getClientName().equals(clientName)) {
+                        // Send a welcome message first
+                        client.sendMessage("Welcome to the Chat Client, " + clientName);
+                        setCoordinator(client);
+                        // Log update must be done in the Swing thread if it's updating the GUI
+//                        SwingUtilities.invokeLater(() -> serverLogTextArea.append(clientName + " is now the coordinator.\n"));
+                        break;
+                    }
+                }
+            }
+        }
     }
 
 
@@ -197,5 +226,6 @@ public class Server {
         System.out.println("Debug: Private recipient not found: " + recipientName); // Debugging line
         sender.sendMessage("User " + recipientName + " not found or not connected.");
     }
+
 
 }
