@@ -116,6 +116,22 @@ public class Server {
     public void removeClient(ClientHandler clientHandler) {
         clientHandlers.remove(clientHandler);
         System.out.println("Client disconnected: " + clientHandler.getClientName());
+        // If the leaving client is the coordinator, reassign the role
+        if (coordinator != null && coordinator.equals(clientHandler)) {
+            reassignCoordinator();
+        }
+        updateActiveUsers();
+    }
+
+    private void reassignCoordinator() {
+        if (!clientHandlers.isEmpty()) {
+            // Assign the coordinator role to the next user in the list
+            coordinator = clientHandlers.get(0);
+            setCoordinator(coordinator); // Method already exists, assuming it notifies users
+        } else {
+            // If there are no users left, set the coordinator to null
+            coordinator = null;
+        }
     }
 
     public void executeCommand(String command, ClientHandler sender) {
@@ -126,6 +142,7 @@ public class Server {
                 if (tokens.length > 1) {
                     String usernameToKick = tokens[1];
                     kickUser(usernameToKick, sender);
+                    break;
                 } else {
                     sender.sendMessage("Usage: /kick <username>");
                 }
@@ -151,8 +168,29 @@ public class Server {
 
 
     private void kickUser(String username, ClientHandler initiator) {
-        // Logic to kick a user...
+        if (initiator != coordinator) {
+            initiator.sendMessage("Error: You are not authorized to kick users.");
+            return;
+        }
+
+        ClientHandler userToKick = null;
+        for (ClientHandler client : clientHandlers) {
+            if (client.getClientName().equalsIgnoreCase(username)) {
+                userToKick = client;
+                break;
+            }
+        }
+
+        if (userToKick != null) {
+            broadcastMessage("User " + username + " has been kicked out by the coordinator.", null);
+            userToKick.disconnect(); // This should remove the user and close the socket
+            removeClient(userToKick); // Remove from the list
+            updateActiveUsers(); // Update the active user list
+        } else {
+            initiator.sendMessage("Error: User " + username + " not found.");
+        }
     }
+
 
 
     // Main method for starting the server

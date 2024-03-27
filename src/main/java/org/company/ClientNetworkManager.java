@@ -43,11 +43,28 @@ public class ClientNetworkManager {
 
             sendUserName(); // Send the username immediately after establishing a connection
 
+            String serverResponse = input.readLine();
+            if (serverResponse.startsWith("Error:")) {
+                JOptionPane.showMessageDialog(null, serverResponse, "Connection Error", JOptionPane.ERROR_MESSAGE);
+                disconnect(); // Disconnect from the server
+                return false;
+            }
+
             startListening();
             return true; // Connection was successful
         } catch (IOException e) {
             ui.displayMessage("Could not connect to server at " + serverIP + ":" + serverPort);
             return false; // Connection failed
+        }
+    }
+
+    public void disconnect() {
+        if (socket != null) {
+            try {
+                socket.close(); // Close the connection to the server
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

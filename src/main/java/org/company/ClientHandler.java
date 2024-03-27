@@ -33,7 +33,7 @@ public class ClientHandler extends Thread {
             } else if (server.isUsernameTaken(attemptedName)) {
                 System.out.println("Username is already taken: " + attemptedName);
                 output.println("Error: Username is already taken.");
-                disconnect(); // Disconnect if username is taken
+                socket.close(); // Disconnect if username is taken
                 return; // Exit the run method
             }
 
@@ -56,13 +56,12 @@ public class ClientHandler extends Thread {
             }
         } catch (IOException e) {
             System.out.println(name + " encountered an error: " + e.getMessage());
-            server.broadcastMessage(name + " has left the chat!", this);
+//            server.broadcastMessage(name + " has left the chat!", this);
             e.printStackTrace();
         } finally {
             disconnect();
         }
     }
-
 
 
     private void sendWelcomeMessage() {
@@ -107,13 +106,19 @@ public class ClientHandler extends Thread {
 
     public void disconnect() {
         try {
-            socket.close();
+            if (!socket.isClosed()) {
+                socket.close();
+            }
         } catch (IOException e) {
             // Log or handle the exception
+        } finally {
+            // Notify the server that this client is disconnecting
+            if (server != null) {
+                server.removeClient(this);
+            }
         }
-        server.removeClient(this);
-        server.updateActiveUsers();
     }
+
 
     public void sendMessage(String message) {
         System.out.println("Debug: Sending message to " + this.getClientName() + " - " + message); // Debug statement
