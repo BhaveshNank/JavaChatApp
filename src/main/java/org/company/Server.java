@@ -6,6 +6,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +22,8 @@ public class Server {
     private ExecutorService threadPool; // For handling client threads
     private JTextArea serverLogTextArea;
     private ClientHandler coordinator;
+    // Collection to keep track of client handler threads
+//    private Set<ClientHandler> clientHandlers = ConcurrentHashMap.newKeySet();
 
 
     // Setter method for serverLogTextArea
@@ -266,4 +270,29 @@ public class Server {
     }
 
 
+    // Call this method to send a shutdown signal to all connected clients
+    public void broadcastShutdownSignal() {
+        for (ClientHandler handler : clientHandlers) {
+            handler.sendShutdownSignal();
+        }
+    }
+
+    // Call this method to disconnect all clients
+    public void disconnectAllClients() {
+        for (ClientHandler handler : clientHandlers) {
+            handler.disconnectClient();
+        }
+    }
+
+    // Call this method to wait for all client threads to finish
+    public void waitForClientThreadsToFinish() {
+        for (ClientHandler handler : clientHandlers) {
+            try {
+                handler.join(); // Waits for this thread to die
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // preserve interruption status
+                // Handle exception, perhaps log it
+            }
+        }
+    }
 }

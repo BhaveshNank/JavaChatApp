@@ -10,6 +10,7 @@ public class ClientHandler extends Thread {
     private final PrintWriter output;
     private final Server server;
     private String name; // Name should not be final because it's assigned later
+    private volatile boolean running = true;
 
     public ClientHandler(Socket socket, Server server) throws IOException {
         this.socket = socket;
@@ -133,4 +134,31 @@ public class ClientHandler extends Thread {
     public String getClientName() {
         return name;
     }
+
+    public void sendShutdownSignal() {
+        // You would send a specific message that the client understands as a shutdown signal
+        if (output != null) {
+            output.println("SERVER_SHUTDOWN"); // The client should recognize this command
+            output.flush();
+        }
+    }
+    // Implement this method to disconnect a client cleanly
+    public void disconnectClient() {
+        running = false; // Set running to false so the client handler stops its operations
+        try {
+            if (socket != null) {
+                socket.close();
+            }
+            if (input != null) {
+                input.close();
+            }
+            if (output != null) {
+                output.close();
+            }
+        } catch (IOException e) {
+            // Handle exceptions, perhaps log it
+            e.printStackTrace();
+        }
+    }
+
 }

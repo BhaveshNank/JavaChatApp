@@ -61,13 +61,29 @@ public class ServerGUI extends JFrame {
     }
 
     private void stopServer() {
-        if (server != null) {
-            server.stop();
-            startStopButton.setText("Start Server");
-            logTextArea.append("Server stopped.\n");
+        if (server != null && isServerRunning) {
+            // First, inform all connected clients about server shutdown
+            server.broadcastShutdownSignal();
+
+            // Then, attempt to disconnect each client gracefully
+            server.disconnectAllClients(); // This method should iterate over all client handlers and disconnect them
+
+            // Finally, stop the server itself
+            server.stop(); // This method should close the ServerSocket and interrupt its main loop, if applicable
+
+            // Wait for all client handling threads to finish
+            server.waitForClientThreadsToFinish(); // This method should join all threads or ensure they terminate
+
+            // Update UI after all threads have been handled
+            SwingUtilities.invokeLater(() -> {
+                startStopButton.setText("Start Server");
+                logTextArea.append("Server stopped.\n");
+            });
+
             isServerRunning = false;
         }
     }
+
 
     // Method to append messages to the log text area
     public void appendLog(String message) {

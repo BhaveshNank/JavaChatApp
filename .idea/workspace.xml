@@ -6,8 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="0d2f768f-b8b3-4584-8ef4-bd8cefe73f53" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/company/ChatClientUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/company/ChatClientUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/company/ChatClientUI.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/company/ChatClientUI.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/company/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/company/ClientHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/company/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/company/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/company/ServerGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/company/ServerGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/company/ClientHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/company/ClientHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/company/Server.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/company/Server.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/company/ServerGUI.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/company/ServerGUI.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -185,13 +189,6 @@
         <item itemvalue="JUnit.MainTest" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="jdk-21.0.2-openjdk-21.0.2-4caba194b151-322ed176" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
