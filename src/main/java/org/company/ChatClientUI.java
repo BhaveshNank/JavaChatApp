@@ -3,6 +3,8 @@ package org.company;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ChatClientUI {
     private JFrame frame;
@@ -38,6 +40,8 @@ public class ChatClientUI {
         userModel = new DefaultListModel<>();
         userList = new JList<>(userModel);
         JScrollPane userScrollPane = new JScrollPane(userList);
+
+        setUpUserListContextMenu(); // Setup context menu for user list
 
         sendButton = new JButton("Send");
         quitButton = new JButton("Quit");
@@ -79,6 +83,27 @@ public class ChatClientUI {
         frame.setVisible(true);
     }
 
+    private void setUpUserListContextMenu() {
+        JPopupMenu contextMenu = new JPopupMenu();
+        JMenuItem viewInfoItem = new JMenuItem("View Information");
+        viewInfoItem.addActionListener(e -> requestUserInfo());
+        contextMenu.add(viewInfoItem);
+
+        userList.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e) && !userList.isSelectionEmpty() && userList.locationToIndex(e.getPoint()) == userList.getSelectedIndex()) {
+                    contextMenu.show(userList, e.getX(), e.getY());
+                }
+            }
+        });
+    }
+
+    private void requestUserInfo() {
+        String selectedUser = userList.getSelectedValue();
+        if (selectedUser != null && !selectedUser.isEmpty()) {
+            networkManager.sendMessage("/requestuserinfo " + selectedUser);
+        }
+    }
 
 
     private void sendMessageAction(ActionEvent e) {

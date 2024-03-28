@@ -11,12 +11,25 @@ public class ClientHandler extends Thread {
     private final Server server;
     private String name; // Name should not be final because it's assigned later
     private volatile boolean running = true;
+    private String ipAddress;
+    private int port;
 
     public ClientHandler(Socket socket, Server server) throws IOException {
         this.socket = socket;
         this.server = server;
         input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         output = new PrintWriter(socket.getOutputStream(), true);
+        this.ipAddress = socket.getInetAddress().getHostAddress();
+        this.port = socket.getPort();
+    }
+
+    // Add getters for ipAddress and port
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public int getPort() {
+        return port;
     }
 
     @Override

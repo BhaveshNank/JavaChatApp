@@ -166,8 +166,32 @@ public class Server {
                         .collect(Collectors.joining(","));
                 sender.sendMessage("/updateusers " + users);
                 break;
+                
+            case "/requestuserinfo":
+                if (tokens.length > 1) {
+                    String requestedUsername = tokens[1];
+                    sendUserInfoToRequester(requestedUsername, sender);
+                } else {
+                    sender.sendMessage("Usage: /requestuserinfo <username>");
+                }
+                break;    
+                
+                
             // Handle other commands...
         }
+    }
+
+    private void sendUserInfoToRequester(String username, ClientHandler requester) {
+        for (ClientHandler client : clientHandlers) {
+            if (client.getClientName().equalsIgnoreCase(username)) {
+                // Assuming you implement a method in ClientHandler to get a formatted string of user info
+                String userInfo = String.format("Name: %s, IP Address: %s, Port: %d",
+                        client.getClientName(), client.getIpAddress(), client.getPort());
+                requester.sendMessage(userInfo);
+                return;
+            }
+        }
+        requester.sendMessage("Error: User not found.");
     }
 
 
