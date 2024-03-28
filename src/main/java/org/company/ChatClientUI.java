@@ -11,7 +11,7 @@ public class ChatClientUI {
     private JList<String> userList;
     private DefaultListModel<String> userModel;
     private JButton sendButton;
-    private JButton refreshButton;
+    private JButton quitButton;
 //    private JButton connectButton;
 
     private ClientNetworkManager networkManager;
@@ -40,12 +40,19 @@ public class ChatClientUI {
         JScrollPane userScrollPane = new JScrollPane(userList);
 
         sendButton = new JButton("Send");
-        refreshButton = new JButton("Refresh");
+        quitButton = new JButton("Quit");
 //        connectButton = new JButton("Connect");
 
-        // Action listeners
+        quitButton.addActionListener(e -> {
+            // Logic to handle client shutdown
+            networkManager.disconnect(); // Assuming you have a method to disconnect
+            frame.dispose(); // Close the GUI assuming chatClientUI is your JFrame or holds your JFrame
+            System.exit(0); // Terminate the application
+        });
         sendButton.addActionListener(this::sendMessageAction);
-        refreshButton.addActionListener(e -> networkManager.requestUserList());
+
+
+
 
 //        connectButton.addActionListener(this::connectAction);
 
@@ -60,7 +67,7 @@ public class ChatClientUI {
         JPanel buttonPanel = new JPanel();
 //        buttonPanel.add(connectButton);
         buttonPanel.add(sendButton);
-        buttonPanel.add(refreshButton);
+        buttonPanel.add(quitButton);
         eastPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         frame.add(eastPanel, BorderLayout.EAST);
