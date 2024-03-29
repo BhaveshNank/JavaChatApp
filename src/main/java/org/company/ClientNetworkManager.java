@@ -53,10 +53,11 @@ public class ClientNetworkManager {
             startListening();
             return true; // Connection was successful
         } catch (IOException e) {
-            ui.displayMessage("Could not connect to server at " + serverIP + ":" + serverPort);
+            JOptionPane.showMessageDialog(null, "Could not connect to server at " + serverIP + ":" + serverPort + ".\nError: " + e.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
             return false; // Connection failed
         }
     }
+
 
     public void disconnect() {
         if (socket != null) {

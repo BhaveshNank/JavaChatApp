@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,6 +34,7 @@ class MainTest {
 
     @Mock
     private ClientUserManager userManager; // This line mocks the UserManager for use in tests
+
 
     @BeforeEach
     public void setUp() {
@@ -123,6 +125,74 @@ class MainTest {
             verify(handler).sendMessage("Test broadcast message");
         }
     }
+
+    @Test
+    @DisplayName("Test Sending Private Message")
+    void testSendPrivateMessage() {
+        // Arrange
+        Server serverMock = mock(Server.class);
+        ClientHandler senderMock = mock(ClientHandler.class);
+        ClientHandler receiverMock = mock(ClientHandler.class);
+
+        String senderUsername = "sender";
+        String receiverUsername = "receiver";
+        String privateMessage = "Hello, receiver!";
+        String fullMessage = senderUsername + " (private): " + privateMessage;
+
+        // Prepare the ClientHandler list with the receiver.
+        when(serverMock.getClientHandlerByUsername(receiverUsername)).thenReturn(receiverMock);
+        when(serverMock.getClientHandlerByUsername(senderUsername)).thenReturn(senderMock);
+        when(senderMock.getClientName()).thenReturn(senderUsername);
+        when(receiverMock.getClientName()).thenReturn(receiverUsername);
+
+        // Act
+        serverMock.sendPrivateMessage(privateMessage, receiverUsername, senderMock);
+
+        // Assert
+        // Verify that sendMessage method is called on the receiver's ClientHandler mock with the correct full message
+        verify(receiverMock).sendMessage(fullMessage);
+
+        // Additionally, verify that sendMessage is not called with the private message on the sender's ClientHandler mock
+        verify(senderMock, never()).sendMessage(privateMessage);
+    }
+
+
+
+    @Test
+    @DisplayName("Chat History Test")
+    void testChatHistory() {
+        // Arrange
+        Server server = mock(Server.class);
+        ClientHandler clientHandler = mock(ClientHandler.class);
+        ChatHistory chatHistory = new ChatHistory(); // Assuming this is your chat history class
+
+        String message1 = "Hello, World!";
+        String message2 = "Goodbye, World!";
+
+        // Simulate adding messages to history
+        chatHistory.addMessage(message1);
+        chatHistory.addMessage(message2);
+
+        // Act
+        List<String> messages = chatHistory.getMessages(); // Assuming this method retrieves chat history
+
+        // Assert
+        // Verify that chat history contains all sent messages
+        assertNotNull(messages, "Chat history should not be null");
+        assertEquals(2, messages.size(), "Chat history should contain two messages");
+        assertTrue(messages.contains(message1), "Chat history should contain the first message");
+        assertTrue(messages.contains(message2), "Chat history should contain the second message");
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 

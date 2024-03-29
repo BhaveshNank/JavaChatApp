@@ -85,7 +85,7 @@ public class ChatClientUI {
 
     private void setUpUserListContextMenu() {
         JPopupMenu contextMenu = new JPopupMenu();
-        JMenuItem viewInfoItem = new JMenuItem("View Information");
+        JMenuItem viewInfoItem = new JMenuItem("User Information");
         viewInfoItem.addActionListener(e -> requestUserInfo());
         contextMenu.add(viewInfoItem);
 
@@ -148,7 +148,7 @@ public class ChatClientUI {
         SwingUtilities.invokeLater(() -> {
             messageArea.append(message + "\n");
             // Check if the message is about coordinator status
-            if (message.endsWith("is the coordinator") || message.startsWith("You are now the coordinator")) {
+            if (message.endsWith("is now the coordinator") || message.startsWith("You are now the coordinator")) {
                 // Display the message differently or trigger any additional UI changes
                 JOptionPane.showMessageDialog(frame, message);
             }

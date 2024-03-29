@@ -2,6 +2,7 @@ package org.company;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ public class Server {
     private ExecutorService threadPool; // For handling client threads
     private JTextArea serverLogTextArea;
     private ClientHandler coordinator;
+    private List<ClientHandler> connectedClients = new ArrayList<>();
+
     // Collection to keep track of client handler threads
 //    private Set<ClientHandler> clientHandlers = ConcurrentHashMap.newKeySet();
 
@@ -63,6 +66,14 @@ public class Server {
                     Socket clientSocket = serverSocket.accept(); // Accept incoming connections
                     appendToServerLog("Accepted connection from " + clientSocket.getInetAddress().getHostAddress()); // Log the connection
 
+                    // Perform any necessary checks here. For example:
+                    if (shouldRejectClient(clientSocket)) {
+                        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                        out.println("Error in connecting to the server: The server is full or you are connecting to the wrong instance.");
+                        clientSocket.close();
+                        continue; // Skip further processing for this client
+                    }
+
                     ClientHandler clientHandler = new ClientHandler(clientSocket, this);
                     threadPool.execute(clientHandler); // Handle client in a separate thread
                     clientHandlers.add(clientHandler);
@@ -82,6 +93,11 @@ public class Server {
         }
     }
 
+    private boolean shouldRejectClient(Socket clientSocket) {
+        // Implement logic to determine if the client should be rejected
+        // For example, check if the server is full or if there's another reason the client shouldn't connect
+        return false; // Replace with actual logic
+    }
 
     public void stop() {
         isRunning = false;
@@ -249,7 +265,7 @@ public class Server {
         clientHandler.sendMessage("You are now the coordinator.");
 
         // Inform all other clients about the new coordinator
-        String coordinatorMessage = clientHandler.getClientName() + " is the coordinator";
+        String coordinatorMessage = clientHandler.getClientName() + " is now the coordinator";
         for (ClientHandler client : clientHandlers) {
             if (client != clientHandler) { // Don't send this message to the new coordinator
                 client.sendMessage(coordinatorMessage);
@@ -330,5 +346,15 @@ public class Server {
     public synchronized List<ClientHandler> getClientHandlers() {
         return new ArrayList<>(clientHandlers);
     }
+
+    public ClientHandler getClientHandlerByUsername(String username) {
+        for (ClientHandler client : this.connectedClients) {
+            if (client.getUsername().equals(username)) {
+                return client;
+            }
+        }
+        return null; // or throw an exception if preferred
+    }
+
 }
 
