@@ -26,6 +26,7 @@ public class Server {
 //    private Set<ClientHandler> clientHandlers = ConcurrentHashMap.newKeySet();
 
 
+
     // Setter method for serverLogTextArea
     public void setServerLogTextArea(JTextArea logTextArea) {
         this.serverLogTextArea = logTextArea;
@@ -319,4 +320,15 @@ public class Server {
             }
         }
     }
+
+    // Method to add a client handler to the list
+    public void addClient(ClientHandler clientHandler) {
+        clientHandlers.add(clientHandler);
+    }
+
+    // Getter for clientHandlers
+    public synchronized List<ClientHandler> getClientHandlers() {
+        return new ArrayList<>(clientHandlers);
+    }
 }
+

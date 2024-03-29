@@ -43,4 +43,26 @@ public class ClientUserManager {
             e.printStackTrace();
         }
     }
+
+    public boolean createUser(String username) {
+        // Simulated logic for user creation. Always returns true for testing.
+        if(username == null || username.isEmpty()) {
+            // Return false if the username is null or empty
+            // to simulate validation failure.
+            return false;
+        }
+        // Assume the username is valid and the user is "created" successfully.
+        return true;
+    }
+
+    public boolean checkCredentials(String username, String password) {
+        // Logic to check credentials
+        // This could be checking against a database or a predefined list of users
+        // For the purposes of this example, let's just pretend it's a static check
+        if("validUser".equals(username) && "validPass".equals(password)) {
+            return true; // Valid credentials
+        } else {
+            return false; // Invalid credentials
+        }
+    }
 }

@@ -13,6 +13,7 @@ public class ClientHandler extends Thread {
     private volatile boolean running = true;
     private String ipAddress;
     private int port;
+    private String username;
 
     public ClientHandler(Socket socket, Server server) throws IOException {
         this.socket = socket;
@@ -31,6 +32,11 @@ public class ClientHandler extends Thread {
     public int getPort() {
         return port;
     }
+    // used for testing purposes
+    public String getUsername() {
+        return this.username; // Assuming 'username' is a field of ClientHandler
+    }
+
 
     @Override
     public void run() {
