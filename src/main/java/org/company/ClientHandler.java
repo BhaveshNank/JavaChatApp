@@ -1,15 +1,21 @@
+/**
+ * The ClientHandler class is responsible for managing communication between a single client and the server in a chat application.
+ * Each instance of this class is dedicated to handling the input and output streams for one client socket connection,
+ * facilitating the exchange of messages between the client it serves and other clients via the server.
+ *
+ */
+
 package org.company;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 
 public class ClientHandler extends Thread {
     private final Socket socket;
     private final BufferedReader input;
     private final PrintWriter output;
     private final Server server;
-    private String name; // Name should not be final because it's assigned later
+    private String name; // Name cannot be final because it's assigned later
     private volatile boolean running = true;
     private String ipAddress;
     private int port;
@@ -24,7 +30,7 @@ public class ClientHandler extends Thread {
         this.port = socket.getPort();
     }
 
-    // Add getters for ipAddress and port
+    //getters for ipAddress and port
     public String getIpAddress() {
         return ipAddress;
     }
@@ -34,7 +40,7 @@ public class ClientHandler extends Thread {
     }
     // used for testing purposes
     public String getUsername() {
-        return this.username; // Assuming 'username' is a field of ClientHandler
+        return this.username;
     }
 
 
@@ -43,7 +49,6 @@ public class ClientHandler extends Thread {
         try {
             // Read the username from the input stream
             String attemptedName = input.readLine().trim();
-            System.out.println("Debug: Attempted Username received - '" + attemptedName + "'"); // Debug line
 
             if (attemptedName == null || attemptedName.isEmpty()) {
                 System.out.println("Username is null or empty");
@@ -60,9 +65,9 @@ public class ClientHandler extends Thread {
             // If username is valid and not taken, proceed
             this.name = attemptedName; // Set the username
             server.notifyNewClientConnection(this.name);
-            sendWelcomeMessage();
-            notifyJoin();
-            server.updateActiveUsers(); // Update the active user list
+            sendWelcomeMessage(); // sends a welcome message
+            notifyJoin(); // notifies when a new client joins
+            server.updateActiveUsers(); // Updates the active user list
 
             String inputLine;
             while ((inputLine = input.readLine()) != null) {
@@ -76,15 +81,14 @@ public class ClientHandler extends Thread {
             }
         } catch (IOException e) {
             System.out.println(name + " encountered an error: " + e.getMessage());
-            sendMessage("An error occurred: " + e.getMessage()); // Inform the user about the error if the connection is still alive.
-            // Do not broadcast that a user has joined the chat in the catch block.
+            sendMessage("An error occurred: " + e.getMessage()); // Informs the user about the error if the connection is still alive.
             e.printStackTrace();
         } finally {
             disconnect();
         }
     }
 
-
+    // sends a welcome message
     private void sendWelcomeMessage() {
         sendMessage("Welcome to the Chat Client, " + name);
     }
@@ -94,8 +98,6 @@ public class ClientHandler extends Thread {
         String joinMessage = this.name + " has joined the chat!";
         server.broadcastMessage(joinMessage, this); // Pass 'true' to exclude the sender
     }
-
-
 
 
     private void processInput(String inputLine, ClientHandler client) {
@@ -115,20 +117,17 @@ public class ClientHandler extends Thread {
             server.broadcastMessage(formattedMessage, this); // 'false' or 'true' depending on whether you want to include the sender
 
         } else {
-            // Here, you would handle the command - but do not send the command itself to all clients.
+            // Here, it handle the command - but does not send the command itself to all clients.
             handleCommand(inputLine, client);
         }
     }
 
 
-
     private void handleCommand(String command, ClientHandler client) {
-        // Parse and execute the command
-        // Do not broadcast this as a chat message
+        // for further implementation
     }
 
-
-
+    //Method disconnects the user from the server
     public void disconnect() {
         try {
             if (!socket.isClosed()) {
@@ -144,26 +143,26 @@ public class ClientHandler extends Thread {
         }
     }
 
-
+    //for sending messages
     public void sendMessage(String message) {
-        System.out.println("Debug: Sending message to " + this.getClientName() + " - " + message); // Debug statement
         output.println(message);
     }
 
+    //gets the client's name
     public String getClientName() {
         return name;
     }
 
     public void sendShutdownSignal() {
-        // You would send a specific message that the client understands as a shutdown signal
+        // sends a specific message that the client understands as a shutdown signal
         if (output != null) {
-            output.println("SERVER_SHUTDOWN"); // The client should recognize this command
+            output.println("SERVER_SHUTDOWN"); // The client would recognize this command
             output.flush();
         }
     }
     // Implement this method to disconnect a client cleanly
     public void disconnectClient() {
-        running = false; // Set running to false so the client handler stops its operations
+        running = false; // Setted running to false so the client handler stops its operations
         try {
             if (socket != null) {
                 socket.close();

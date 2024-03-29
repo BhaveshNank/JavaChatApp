@@ -1,3 +1,11 @@
+/**
+ * This class is the user interface component of the chat application. It provides
+ * a graphical interface for users to interact with the chat service. The class is responsible
+ * for setting up the layout and visual elements through which users can send and receive messages,
+ * view the status of their connection, and see the list of online users. It integrates with the
+ * ClientNetworkManager to handle network operations and ClientUserManager for user-related functionalities.
+ */
+
 package org.company;
 
 import javax.swing.*;
@@ -14,7 +22,7 @@ public class ChatClientUI {
     private DefaultListModel<String> userModel;
     private JButton sendButton;
     private JButton quitButton;
-//    private JButton connectButton;
+
 
     private ClientNetworkManager networkManager;
     private ClientUserManager userManager;
@@ -27,6 +35,7 @@ public class ChatClientUI {
         initializeUI(); // initialize the user interface
     }
 
+    // Sets up the chat client's GUI components, including message display, user list, and interaction buttons.
     private void initializeUI() {
         frame = new JFrame(username);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -45,20 +54,15 @@ public class ChatClientUI {
 
         sendButton = new JButton("Send");
         quitButton = new JButton("Quit");
-//        connectButton = new JButton("Connect");
+
 
         quitButton.addActionListener(e -> {
             // Logic to handle client shutdown
-            networkManager.disconnect(); // Assuming you have a method to disconnect
-            frame.dispose(); // Close the GUI assuming chatClientUI is your JFrame or holds your JFrame
+            networkManager.disconnect();
+            frame.dispose(); // Closes the GUI assuming chatClientUI is JFrame or holds your JFrame
             System.exit(0); // Terminate the application
         });
         sendButton.addActionListener(this::sendMessageAction);
-
-
-
-
-//        connectButton.addActionListener(this::connectAction);
 
         // Layout components
         frame.add(messageScrollPane, BorderLayout.CENTER);
@@ -69,7 +73,6 @@ public class ChatClientUI {
         eastPanel.add(userScrollPane, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
-//        buttonPanel.add(connectButton);
         buttonPanel.add(sendButton);
         buttonPanel.add(quitButton);
         eastPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -83,6 +86,7 @@ public class ChatClientUI {
         frame.setVisible(true);
     }
 
+    // Creates a context menu for the user list, allowing additional options like viewing user information.
     private void setUpUserListContextMenu() {
         JPopupMenu contextMenu = new JPopupMenu();
         JMenuItem viewInfoItem = new JMenuItem("User Information");
@@ -98,6 +102,7 @@ public class ChatClientUI {
         });
     }
 
+    // Requests detailed information about the selected user from the server.
     private void requestUserInfo() {
         String selectedUser = userList.getSelectedValue();
         if (selectedUser != null && !selectedUser.isEmpty()) {
@@ -105,7 +110,7 @@ public class ChatClientUI {
         }
     }
 
-
+    // Sends the message written in the input field to the server and displays it in the chat area.
     private void sendMessageAction(ActionEvent e) {
         if (networkManager.isConnected()) {
             String message = inputField.getText();
@@ -120,30 +125,13 @@ public class ChatClientUI {
     }
 
 
-//    private void connectAction(ActionEvent e) {
-//        if (!networkManager.isConnected()) {
-//            boolean success = networkManager.tryToConnect();
-//            if (success) {
-//                connectButton.setEnabled(false); // Disable after successful connection
-//                sendButton.setEnabled(true); // Enable send button after connection
-//                displayMessage("Connected to the server.");
-//            } else {
-//                displayMessage("Could not connect to the server. Try again.");
-//            }
-//        }
-//    }
-
-
-
-    private void refreshUserListAction(ActionEvent e) {
-        networkManager.requestUserList();
-    }
-
+    // Refreshes the display of the user list with the most current usernames.
     public void refreshUserList() {
         userModel.clear();
         userModel.addAll(userManager.readUsernames());
     }
 
+    // Appends a given message to the chat area and handles special UI cases for coordinator messages.
     public void displayMessage(String message) {
         SwingUtilities.invokeLater(() -> {
             messageArea.append(message + "\n");
@@ -155,14 +143,14 @@ public class ChatClientUI {
         });
     }
 
-
-
+    // Sets the network manager for the client and updates UI components based on the connection status.
     public void setNetworkManager(ClientNetworkManager networkManager) {
         this.networkManager = networkManager;
         // Assuming the network manager must be connected before enabling the send button.
         sendButton.setEnabled(networkManager.isConnected());
     }
 
+    // Updates the user list UI with the provided array of usernames.
     public void updateUserList(String[] usernames) {
         SwingUtilities.invokeLater(() -> {
             userModel.clear();
@@ -172,7 +160,7 @@ public class ChatClientUI {
         });
     }
 
-
+    // Retrieves the main frame of the client's user interface.
     public JFrame getFrame() {
         return frame;
     }
