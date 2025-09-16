@@ -5,10 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0d2f768f-b8b3-4584-8ef4-bd8cefe73f53" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/images/admin_kick_success.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/images/broadcast_message.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/images/client_connect_screen.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/images/coordinator_assigned.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/images/duplicate_username_error.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/images/non_admin_kick_error.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/images/private_message_format.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/images/server_port_prompt.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/images/server_running_with_join.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/images/users_list_and_userinfo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/company/ChatClientUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/company/ChatClientUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/company/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/company/ClientHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/company/ClientMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/company/ClientMain.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,6 +39,9 @@
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="2" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
 }</component>
@@ -37,42 +51,46 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.ClientMain.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Server.executor&quot;: &quot;Run&quot;,
-    &quot;Application.ServerGUI (1).executor&quot;: &quot;Run&quot;,
-    &quot;Application.ServerGUI (2).executor&quot;: &quot;Run&quot;,
-    &quot;Application.ServerGUI.executor&quot;: &quot;Run&quot;,
-    &quot;Application.ServerMain.executor&quot;: &quot;Run&quot;,
-    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;true&quot;,
-    &quot;JUnit.MainTest (1).executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.MainTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.MainTest.testConnection.executor&quot;: &quot;Run&quot;,
-    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;21&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/bhavesh/Desktop/COMP1549_CW/LetsChatt/src/Main.java&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.ClientMain.executor": "Run",
+    "Application.Server.executor": "Run",
+    "Application.ServerGUI (1).executor": "Run",
+    "Application.ServerGUI (2).executor": "Run",
+    "Application.ServerGUI.executor": "Run",
+    "Application.ServerMain.executor": "Run",
+    "Downloaded.Files.Path.Enabled": "true",
+    "JUnit.MainTest (1).executor": "Run",
+    "JUnit.MainTest.executor": "Run",
+    "JUnit.MainTest.testConnection.executor": "Run",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "jdk.selected.JAVA_MODULE": "21",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/bhaveshnankani/JavaChatApp",
+    "onboarding.tips.debug.path": "/Users/bhavesh/Desktop/COMP1549_CW/LetsChatt/src/Main.java",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="org.company" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/docs/images" />
     </key>
   </component>
   <component name="RunManager" selected="Application.ClientMain">
     <configuration name="ClientMain" type="Application" factoryName="Application" singleton="false" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.company.ClientMain" />
-      <module name="LetsChatt" />
+      <module name="networking_good" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="org.company.*" />
@@ -98,7 +116,7 @@
     </configuration>
     <configuration name="ServerGUI" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.company.ServerGUI" />
-      <module name="LetsChatt" />
+      <module name="networking_good" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="org.company.*" />
@@ -191,13 +209,6 @@
         <item itemvalue="JUnit.MainTest.testConnection" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="jdk-21.0.2-openjdk-21.0.2-4caba194b151-322ed176" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
