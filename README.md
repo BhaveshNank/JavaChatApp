@@ -2,7 +2,7 @@
 
 A Java-based multi-client chat application with a GUI server and GUI clients.  
 The server accepts connections, manages active users, and relays messages.  
-Clients can send broadcasts, private DMs, view active users, and—if they’re admins—kick users.  
+Clients can send broadcasts, private DMs, view active users, and if they’re admin they can kick users.  
 The first client to join becomes the **coordinator** automatically.
 
 ---
